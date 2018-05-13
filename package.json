@@ -1,0 +1,20 @@
+{
+  "name": "lambda-api-workshop",
+  "version": "1.0.0",
+  "description": "A workshop to learn how to build secure APIs using AWS lambdas, JWT and the serverless framework",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feliun/lambda-api-workshop.git"
+  },
+  "author": "Felipe Polo Ruiz <felipe.polo@gmail.com> (https://github.com/feliun)",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bcryptjs-then": "^1.0.1",
+    "jsonwebtoken": "^8.2.1"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.21.1"
+  }
+}
