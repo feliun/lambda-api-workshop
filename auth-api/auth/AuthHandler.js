@@ -49,3 +49,20 @@ module.exports.verify = (event, context, callback) => {
       callback(null, policy);
     });
 };
+
+module.exports.me = (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  return connectToDatabase()
+    .then(initController)
+    // the decoded.id from the VerifyToken.auth will be passed along as the principalId under the authorizer
+    .then(({ me }) => me(event.requestContext.authorizer.principalId))
+    .then(session => ({
+      statusCode: 200,
+      body: JSON.stringify(session)
+    }))
+    .catch(err => ({
+      statusCode: err.statusCode || 500,
+      headers: { 'Content-Type': 'text/plain' },
+      body: { stack: err.stack, message: err.message }
+    }));
+};

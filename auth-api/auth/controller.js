@@ -4,7 +4,7 @@ module.exports = init = (db) => {
 
   const users = db.collections('users');
 
-  const getUser = (email) => users.findOne({ email });
+  const getUser = (criteria, options = {}) => users.findOne(criteria, options);
 
   const saveUser = (user) => users.insert(user);
 
@@ -23,9 +23,9 @@ module.exports = init = (db) => {
 
   const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: 86400 });
 
-  const register = (eventBody) => {
-    return validate(eventBody)
-      .then(() => getUser(eventBody.email))
+  const register = (eventBody) =>
+    validate(eventBody)
+      .then(() => getUser({ email: eventBody.email }))
       .then(user =>
         user
           ? Promise.reject(new Error('User with that email exists.'))
@@ -33,26 +33,23 @@ module.exports = init = (db) => {
       )
       .then(hash => saveUser({ name: eventBody.name, email: eventBody.email, password: hash }))
       .then(user => ({ auth: true, token: signToken(user._id) }));
-  };
 
-  const comparePassword = (eventPassword, userPassword, userId) => {
-    return bcrypt.compare(eventPassword, userPassword)
+  const comparePassword = (eventPassword, userPassword, userId) =>
+    bcrypt.compare(eventPassword, userPassword)
       .then(passwordIsValid =>
         !passwordIsValid
           ? Promise.reject(new Error('The credentials do not match.'))
           : signToken(userId)
       );
-  };
 
-  const login = (eventBody) => {
-    return getUser({ email: eventBody.email })
+  const login = (eventBody) =>
+    getUser({ email: eventBody.email })
       .then(user =>
         !user
           ? Promise.reject(new Error('User with that email does not exits.'))
           : comparePassword(eventBody.password, user.password, user._id)
       )
       .then(token => ({ auth: true, token: token }));
-  };
 
   const verify = (token) => new Promise((resolve, reject) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -78,10 +75,20 @@ module.exports = init = (db) => {
     return authResponse;
   };
 
+  const me = (userId) =>
+    getUser({ id: userId }, { password: 0 })
+      .then(user =>
+        !user
+          ? Promise.reject('No user found.')
+          : user
+      )
+      .catch(err => Promise.reject(new Error(err)));
+
   return {
     register,
     login,
     verify,
     generatePolicy,
+    me,
   };
 };

@@ -37,3 +37,9 @@ npm install --save-dev serverless-offline // development setup
 2. `cat ./auth/AuthHandler`
 3. `cat ./auth/controller`
 4. `git checkout step-5`
+
+## Step 5: Using authorisation
+
+1. `cat ./auth/AuthHandler`
+2. `cat ./auth/controller`
+3. `git checkout step-6`
