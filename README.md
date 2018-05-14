@@ -19,3 +19,9 @@ npm install --save-dev serverless-offline // development setup
 4. `cat secrets.json`
 5. `cat serverless.yml`
 6. `git checkout step-2`
+
+## Step 2: Adding users functions
+
+1. `cat serverless.yml`
+2. `ls ./user`
+3. `git checkout step-3`
