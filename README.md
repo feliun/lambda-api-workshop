@@ -30,3 +30,10 @@ npm install --save-dev serverless-offline // development setup
 
 1. `ls ./auth`
 2. `git checkout step-4`
+
+## Step 4: Adding authorisation
+
+1. `cat serverless.yml`
+2. `cat ./auth/AuthHandler`
+3. `cat ./auth/controller`
+4. `git checkout step-5`

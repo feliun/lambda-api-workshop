@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+
 module.exports = init = (db) => {
 
   const users = db.collections('users');
@@ -52,8 +54,34 @@ module.exports = init = (db) => {
       .then(token => ({ auth: true, token: token }));
   };
 
+  const verify = (token) => new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) return reject(err);
+      resolve(decoded);
+    });
+  });
+
+  const generatePolicy = (principalId, effect, resource) => {
+    const authResponse = { principalId };
+    if (effect && resource) {
+      authResponse['policyDocument'] = {
+        Version: '2012-10-17',
+        Statement:[
+          {
+            Action: 'execute-api:Invoke',
+            Effect: effect,
+            Resource: resource
+          }
+        ]
+      };
+    }
+    return authResponse;
+  };
+
   return {
     register,
     login,
+    verify,
+    generatePolicy,
   };
 };

@@ -1,6 +1,4 @@
 const connectToDatabase = require('../db');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs-then');
 const initController = require('./controller');
 
 module.exports.register = (event, context) => {
@@ -33,4 +31,21 @@ module.exports.login = (event, context) => {
       headers: { 'Content-Type': 'text/plain' },
       body: { stack: err.stack, message: err.message }
     }));
+};
+
+module.exports.verify = (event, context, callback) => {
+  // check header or url parameters or post parameters for token
+  const token = event.authorizationToken;
+  if (!token) return callback(null, 'Unauthorized');
+  return connectToDatabase()
+    .then(initController)
+    .then((controller) =>
+      controller.verify(token)
+        .then((decoded) => controller.generatePolicy(decoded.id, 'Allow', event.methodArn))
+    )
+    .then((policy) => callback(null, policy))
+    .catch((error) => {
+      console.error(`Error verifying token: ${error.message}, ${error.stack}`);
+      callback(null, policy);
+    });
 };

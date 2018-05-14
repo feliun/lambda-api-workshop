@@ -14,7 +14,7 @@ provider:
 
 functions:
   verify-token:
-    handler: auth/VerifyToken.auth
+    handler: auth/AuthHandler.verify
 
   login:
     handler: auth/AuthHandler.login
