@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const bcrypt = require('bcryptjs-then');
+const { ObjectId } = require('mongodb');
 
 module.exports = init = (db) => {
 
@@ -6,7 +8,7 @@ module.exports = init = (db) => {
 
   const getUser = (criteria, options = {}) => users.findOne(criteria, options);
 
-  const saveUser = (user) => users.insert(user);
+  const saveUser = (user) => users.insert(user).then((({ ops }) => ops[0]));
 
   const validate = (eventBody) => {
     if (!(eventBody.password && eventBody.password.length >= 7))
@@ -19,7 +21,7 @@ module.exports = init = (db) => {
       return Promise.reject(new Error('Email error. Email must have valid characters.'));
 
     return Promise.resolve();
-  }
+  };
 
   const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: 86400 });
 
@@ -76,7 +78,7 @@ module.exports = init = (db) => {
   };
 
   const me = (userId) =>
-    getUser({ id: userId }, { password: 0 })
+    getUser({ _id: ObjectId(userId) }, { password: 0 })
       .then(user =>
         !user
           ? Promise.reject('No user found.')

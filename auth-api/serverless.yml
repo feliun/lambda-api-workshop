@@ -48,3 +48,6 @@ functions:
           path: users
           method: get
           cors: true
+
+plugins:
+  - serverless-offline

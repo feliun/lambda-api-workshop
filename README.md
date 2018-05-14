@@ -58,3 +58,16 @@ AWS_PROFILE=<your_profile> sls deploy
 AWS_PROFILE=<your_profile> sls remove
 git checkout step-7
 ```
+
+## Step 7: Testing
+
+Look at the new line in serverless.yml
+
+```
+sls offline start --skipCacheInvalidation
+```
+- test /register
+- test /me
+- test /login
+
+`git checkout step-8`

@@ -52,6 +52,7 @@ module.exports.verify = (event, context, callback) => {
 
 module.exports.me = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
+  console.log('event.requestContext.authorizer: ', event.requestContext.authorizer.principalId)
   return connectToDatabase()
     .then(initController)
     // the decoded.id from the VerifyToken.auth will be passed along as the principalId under the authorizer
