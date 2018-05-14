@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 module.exports = init = (db) => {
 
-  const users = db.collections('users');
+  const users = db.collection('users');
 
   const getUser = (criteria, options = {}) => users.findOne(criteria, options);
 

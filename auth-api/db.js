@@ -9,8 +9,8 @@ module.exports = connectToDatabase = () => {
   }
   console.log('Creating new database connection');
   return connect(process.env.DB, { useNewUrlParser: true })
-    .then(db => {
-      mongo = db;
-      return db;
+    .then(client => {
+      mongo = client.db('secure-api');
+      return mongo;
     });
 };

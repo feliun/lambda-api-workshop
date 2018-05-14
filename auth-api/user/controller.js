@@ -1,5 +1,5 @@
 module.exports = init = (db) => {
-  const users = db.collections('users');
+  const users = db.collection('users');
 
   const getUsers = () => users.find({}).toArray();
 

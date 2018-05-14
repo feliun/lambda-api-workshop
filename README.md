@@ -43,3 +43,18 @@ npm install --save-dev serverless-offline // development setup
 1. `cat ./auth/AuthHandler`
 2. `cat ./auth/controller`
 3. `git checkout step-6`
+
+## Step 6: Deployment
+
+- Watch your secrets.json lives inside ./auth-api
+
+```
+cd auth-api
+AWS_PROFILE=<your_profile> sls deploy
+```
+- Watch your lambda section in AWS (mind the region!) and try to get all users
+
+```
+AWS_PROFILE=<your_profile> sls remove
+git checkout step-7
+```
