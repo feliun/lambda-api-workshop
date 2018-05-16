@@ -1,10 +1,10 @@
 const connectToDatabase = require('../db');
-const initController = require('./controller');
+const initUser = require('../model/user');
 
 module.exports.getUsers = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   return connectToDatabase()
-    .then(initController)
+    .then(initUser)
     .then(({ getUsers }) => getUsers())
     .then(users => ({
       statusCode: 200,

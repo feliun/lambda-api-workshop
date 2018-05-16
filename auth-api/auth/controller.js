@@ -2,13 +2,7 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const bcrypt = require('bcryptjs-then');
 const { ObjectId } = require('mongodb');
 
-module.exports = init = (db) => {
-
-  const users = db.collection('users');
-
-  const getUser = (criteria, options = {}) => users.findOne(criteria, options);
-
-  const saveUser = (user) => users.insert(user).then((({ ops }) => ops[0]));
+module.exports = init = (userModel) => {
 
   const validate = (eventBody) => {
     if (!(eventBody.password && eventBody.password.length >= 7))
@@ -27,13 +21,13 @@ module.exports = init = (db) => {
 
   const register = (eventBody) =>
     validate(eventBody)
-      .then(() => getUser({ email: eventBody.email }))
+      .then(() => userModel.getUser({ email: eventBody.email }))
       .then(user =>
         user
           ? Promise.reject(new Error('User with that email exists.'))
           : bcrypt.hash(eventBody.password, 8)
       )
-      .then(hash => saveUser({ name: eventBody.name, email: eventBody.email, password: hash }))
+      .then(hash => userModel.saveUser({ name: eventBody.name, email: eventBody.email, password: hash }))
       .then(user => ({ auth: true, token: signToken(user._id) }));
 
   const comparePassword = (eventPassword, userPassword, userId) =>
@@ -45,10 +39,10 @@ module.exports = init = (db) => {
       );
 
   const login = (eventBody) =>
-    getUser({ email: eventBody.email })
+    userModel.getUser({ email: eventBody.email })
       .then(user =>
         !user
-          ? Promise.reject(new Error('User with that email does not exits.'))
+          ? Promise.reject(new Error('User with that email does not exist.'))
           : comparePassword(eventBody.password, user.password, user._id)
       )
       .then(token => ({ auth: true, token: token }));
@@ -78,7 +72,7 @@ module.exports = init = (db) => {
   };
 
   const me = (userId) =>
-    getUser({ _id: ObjectId(userId) }, { password: 0 })
+    userModel.getUser({ _id: ObjectId(userId) }, { password: 0 })
       .then(user =>
         !user
           ? Promise.reject('No user found.')

@@ -71,3 +71,5 @@ sls offline start --skipCacheInvalidation
 - test /login
 
 `git checkout step-8`
+
+## Step 8: Small refactor (user model encapsulated)

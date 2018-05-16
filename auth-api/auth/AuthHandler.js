@@ -1,9 +1,11 @@
 const connectToDatabase = require('../db');
+const initUser = require('../model/user');
 const initController = require('./controller');
 
 module.exports.register = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   return connectToDatabase()
+    .then(initUser)
     .then(initController)
     .then(({ register }) => register(JSON.parse(event.body)))
     .then(session => ({
@@ -20,6 +22,7 @@ module.exports.register = (event, context) => {
 module.exports.login = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   return connectToDatabase()
+    .then(initUser)
     .then(initController)
     .then(({ login }) => login(JSON.parse(event.body)))
     .then(session => ({
@@ -38,6 +41,7 @@ module.exports.verify = (event, context, callback) => {
   const token = event.authorizationToken;
   if (!token) return callback(null, 'Unauthorized');
   return connectToDatabase()
+    .then(initUser)
     .then(initController)
     .then((controller) =>
       controller.verify(token)
@@ -54,6 +58,7 @@ module.exports.me = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   console.log('event.requestContext.authorizer: ', event.requestContext.authorizer.principalId)
   return connectToDatabase()
+    .then(initUser)
     .then(initController)
     // the decoded.id from the VerifyToken.auth will be passed along as the principalId under the authorizer
     .then(({ me }) => me(event.requestContext.authorizer.principalId))
